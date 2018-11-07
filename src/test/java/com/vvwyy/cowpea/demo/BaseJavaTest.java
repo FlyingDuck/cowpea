@@ -2,6 +2,8 @@ package com.vvwyy.cowpea.demo;
 
 import org.junit.Test;
 
+import java.util.concurrent.ThreadFactory;
+
 public class BaseJavaTest {
 
 
