@@ -1,3 +1,18 @@
+/*
+ *   Copyright 2018 Bennett Dong
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
 package com.vvwyy.cowpea;
 
 import com.google.common.base.Preconditions;
@@ -12,34 +27,34 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.concurrent.TimeUnit.MICROSECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-public abstract class TimeVortex {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TimeVortex.class);
+public abstract class TimeAbsorber {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TimeAbsorber.class);
 
-    public static TimeVortex create(double taskPreSecond) {
+    public static TimeAbsorber create(double taskPreSecond) {
         return create(taskPreSecond, SleepingStopwatch.createFromSystemTimer());
     }
 
-    public static TimeVortex create(double taskPreSecond, SleepingStopwatch stopwatch) {
-        TimeVortex timeVortex = new SmoothTimeVortex.SmoothConstant(stopwatch, 5*60);
-        timeVortex.setRate(taskPreSecond);
-        return timeVortex;
+    public static TimeAbsorber create(double taskPreSecond, SleepingStopwatch stopwatch) {
+        TimeAbsorber timeAbsorber = new SmoothTimeAbsorber.SmoothConstant(stopwatch, 5*60);
+        timeAbsorber.setRate(taskPreSecond);
+        return timeAbsorber;
     }
 
-    public static TimeVortex create(double taskPreSecond, long stablePeriod, TimeUnit timeUnit) {
+    public static TimeAbsorber create(double taskPreSecond, long stablePeriod, TimeUnit timeUnit) {
         checkArgument(stablePeriod >= 0, "stablePeriod must not be negative: %s", stablePeriod);
         return create(taskPreSecond, stablePeriod, 3.0, timeUnit, SleepingStopwatch.createFromSystemTimer());
     }
 
-    public static TimeVortex create(double taskPreSecond, long stablePeriod, double increaseFactor, TimeUnit timeUnit, SleepingStopwatch stopwatch) {
-        TimeVortex timeVortex = new SmoothTimeVortex.SmoothLinear(stopwatch, stablePeriod, timeUnit,increaseFactor);
-        timeVortex.setRate(taskPreSecond);
-        return timeVortex;
+    public static TimeAbsorber create(double taskPreSecond, long stablePeriod, double increaseFactor, TimeUnit timeUnit, SleepingStopwatch stopwatch) {
+        TimeAbsorber timeAbsorber = new SmoothTimeAbsorber.SmoothLinear(stopwatch, stablePeriod, timeUnit,increaseFactor);
+        timeAbsorber.setRate(taskPreSecond);
+        return timeAbsorber;
     }
 
 
     private final SleepingStopwatch stopwatch;
 
-    TimeVortex(SleepingStopwatch stopwatch) {
+    TimeAbsorber(SleepingStopwatch stopwatch) {
         this.stopwatch = Preconditions.checkNotNull(stopwatch);
     }
 

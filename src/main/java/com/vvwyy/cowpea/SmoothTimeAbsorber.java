@@ -1,10 +1,25 @@
+/*
+ *   Copyright 2018 Bennett Dong
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
 package com.vvwyy.cowpea;
 
 import java.util.concurrent.TimeUnit;
 
-public abstract class SmoothTimeVortex extends TimeVortex {
+public abstract class SmoothTimeAbsorber extends TimeAbsorber {
 
-    static final class SmoothConstant extends SmoothTimeVortex {
+    static final class SmoothConstant extends SmoothTimeAbsorber {
 
         final double maxWaitSeconds;
 
@@ -30,7 +45,7 @@ public abstract class SmoothTimeVortex extends TimeVortex {
         }
     }
 
-    static final class SmoothLinear extends SmoothTimeVortex {
+    static final class SmoothLinear extends SmoothTimeAbsorber {
         private long stablePeriodMicros;
         private double slope;
         private double thresholdDebts;
@@ -77,7 +92,7 @@ public abstract class SmoothTimeVortex extends TimeVortex {
 
     double stableIntervalMicros;
 
-    SmoothTimeVortex(SleepingStopwatch stopwatch) {
+    SmoothTimeAbsorber(SleepingStopwatch stopwatch) {
         super(stopwatch);
     }
 
