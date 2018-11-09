@@ -16,5 +16,8 @@ A Development Kit for Java
 
 ## Components
 
+- TimeAbsorber
+
+### TimeAbsorber
 > TODO
 
