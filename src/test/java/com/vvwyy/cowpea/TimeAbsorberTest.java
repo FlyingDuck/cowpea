@@ -3,6 +3,7 @@ package com.vvwyy.cowpea;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 public class TimeAbsorberTest {
 
@@ -18,8 +19,9 @@ public class TimeAbsorberTest {
 
             }
             System.out.println(i+":" + LocalDateTime.now());
-            vortex.owe();
+            vortex.absorb();
             System.out.println(i+":" + LocalDateTime.now());
         }
     }
+
 }

@@ -67,11 +67,11 @@ public abstract class TimeAbsorber {
 
     abstract void doSetRate(double taskPreSecond);
 
-    public double owe() {
-        return owe(1);
+    public double absorb() {
+        return absorb(1);
     }
 
-    public double owe(int debts) {
+    public double absorb(int debts) {
         long microsToWait = adjust(debts);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Will wait for {} micros", microsToWait);
@@ -87,11 +87,11 @@ public abstract class TimeAbsorber {
         }
     }
 
-    public double repay() {
-        return repay(1);
+    public double recover() {
+        return recover(1);
     }
 
-    public double repay(int debts) {
+    public double recover(int debts) {
         checkPermits(debts);
         synchronized (mutex()) {
             return adjustAndGetWaitLength(-debts);

@@ -5,9 +5,17 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>Cowpea</name>
-    <groupId>com.vvwyy.cowpea</groupId>
+    <groupId>com.vvwyy</groupId>
     <artifactId>cowpea</artifactId>
-    <version>1.0.0-BATE</version>
+    <version>0.0.2-BATE</version>
+    <description>A Development Kit for Java</description>
+    <url>https://github.com/FlyingDuck/cowpea</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+    </properties>
 
 
     <dependencies>
@@ -60,9 +68,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
 
@@ -70,7 +80,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.2.1</version>
+                <version>3.0.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -85,7 +95,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
+                <version>3.0.1</version>
                 <configuration>
                     <show>private</show>
                     <nohelp>true</nohelp>
@@ -108,7 +118,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.5</version>
+                <version>1.6</version>
                 <executions>
                     <execution>
                         <phase>verify</phase>
