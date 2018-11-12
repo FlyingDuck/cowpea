@@ -7,7 +7,7 @@
     <name>Cowpea</name>
     <groupId>com.vvwyy</groupId>
     <artifactId>cowpea</artifactId>
-    <version>0.0.3-BATE</version>
+    <version>0.0.2-BATE</version>
     <description>A Development Kit for Java</description>
     <url>https://github.com/FlyingDuck/cowpea</url>
 
