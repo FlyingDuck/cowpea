@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>Cowpea</name>
-    <groupId>com.vvwyy.cowpea</groupId>
+    <groupId>com.vvwyy</groupId>
     <artifactId>cowpea</artifactId>
     <version>0.0.3-BATE</version>
     <description>A Development Kit for Java</description>
