@@ -41,6 +41,13 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>3.6.2</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <developers>
