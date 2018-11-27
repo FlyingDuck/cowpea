@@ -1,5 +1,6 @@
-package com.vvwyy.cowpea;
+package com.vvwyy.cowpea.test;
 
+import com.vvwyy.cowpea.TimeAbsorber;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
