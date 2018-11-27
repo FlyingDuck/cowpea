@@ -1,4 +1,4 @@
-package com.vvwyy.cowpea.test.spi;
+package com.vvwyy.cowpea.test.spi.shape;
 
 
 import com.vvwyy.cowpea.spi.Service;

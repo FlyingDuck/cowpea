@@ -1,4 +1,4 @@
-package com.vvwyy.cowpea.test.spi;
+package com.vvwyy.cowpea.test.spi.shape;
 
 import com.vvwyy.cowpea.spi.Service;
 import com.vvwyy.cowpea.spi.ServiceProvider;
@@ -14,7 +14,7 @@ public class GhostShape implements Shape {
         return 0;
     }
 
-    class Provider implements Shape.Provider {
+    public class Provider implements Shape.Provider {
 
         @Override
         public Shape create() {

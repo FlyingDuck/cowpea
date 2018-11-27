@@ -585,7 +585,8 @@ public final class ServiceLocator implements ServiceProvider<Service> {
         private <T, V> Collection<ServiceFactory<? extends T>> discoverServices(ServiceMap resolved, Class<T> serviceClass) {
             @SuppressWarnings("unchecked")
             Collection<ServiceFactory<? extends T>> serviceFactories = getServiceFactories(serviceLoader).stream()
-                    .filter(f -> serviceClass.isAssignableFrom(f.getServiceType())).map(f -> (ServiceFactory<? extends T>) f)
+                    .filter(f -> serviceClass.isAssignableFrom(f.getServiceType()))
+                    .map(f -> (ServiceFactory<? extends T>) f)
                     .filter(f -> !f.getClass().isAnnotationPresent(ServiceFactory.RequiresConfiguration.class))
                     .filter(f -> !provided.contains(f.getServiceType()))
                     .filter(f -> !resolved.contains(f.getServiceType()))

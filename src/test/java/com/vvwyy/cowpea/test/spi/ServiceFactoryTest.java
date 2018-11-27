@@ -1,6 +1,12 @@
 package com.vvwyy.cowpea.test.spi;
 
 import com.vvwyy.cowpea.spi.ServiceLocator;
+import com.vvwyy.cowpea.test.spi.car.Auto;
+import com.vvwyy.cowpea.test.spi.car.Car;
+import com.vvwyy.cowpea.test.spi.car.Truck;
+import com.vvwyy.cowpea.test.spi.shape.GhostShape;
+import com.vvwyy.cowpea.test.spi.shape.Shape;
+import com.vvwyy.cowpea.test.spi.shape.Square;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -74,9 +80,47 @@ public class ServiceFactoryTest {
         Assert.assertEquals(false, serviceLocator.knowsServiceFor(GhostShape.Provider.class));
         Assert.assertEquals(true, serviceLocator.knowsServiceFor(Square.Provider.class));
 
-
         Shape.Provider shapeProvider = serviceLocator.getService(GhostShape.Provider.class);
         Assert.assertNull(shapeProvider);
+    }
+
+    @Test
+    public void testNoconfigDependencyService() {
+        serviceLocator = ServiceLocator.dependencySet()
+                .with(Square.Provider.class)
+                .with(Car.Provider.class)
+                .build();
+
+        serviceLocator.startAllServices();
+
+        Car.Provider carProvider = serviceLocator.getService(Car.Provider.class);
+        Assert.assertNotNull(carProvider);
+
+        try {
+            Auto auto = carProvider.create();
+        } catch (NullPointerException e) {
+            Assert.assertTrue(true);
+            return;
+        }
+        Assert.fail("Need to fail.");
+    }
+
+    @Test
+    public void testConfigDependencyService() {
+        serviceLocator = ServiceLocator.dependencySet()
+                .with(Square.Provider.class)
+                //.with(Car.Provider.class)
+                .with(Truck.Provider.class)
+                .build();
+
+        serviceLocator.startAllServices();
+
+        Truck.Provider truckProvider = serviceLocator.getService(Truck.Provider.class);
+        Assert.assertNotNull(truckProvider);
+
+        Auto auto = truckProvider.create();
+        Assert.assertEquals(30, auto.wheelMeasure());
+        Assert.assertEquals(8, auto.wheelNum());
     }
 
 
