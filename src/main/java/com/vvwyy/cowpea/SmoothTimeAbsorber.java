@@ -117,4 +117,10 @@ public abstract class SmoothTimeAbsorber extends TimeAbsorber {
         owedDebts = Math.min(maxDebts, owedDebts+debts);
     }
 
+    @Override
+    public double recover() {
+        double owed = owedDebts;
+        this.owedDebts = 0;
+        return owed;
+    }
 }

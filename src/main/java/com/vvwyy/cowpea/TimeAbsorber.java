@@ -87,16 +87,18 @@ public abstract class TimeAbsorber {
         }
     }
 
-    public double recover() {
-        return recover(1);
-    }
+    public abstract double recover();
 
-    public double recover(int debts) {
+    /*public double recover() {
+        return recover(1);
+    }*/
+
+    /*public double recover(int debts) {
         checkPermits(debts);
         synchronized (mutex()) {
             return adjustAndGetWaitLength(-debts);
         }
-    }
+    }*/
 
     abstract long adjustAndGetWaitLength(int debts);
 
