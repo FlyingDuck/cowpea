@@ -4,6 +4,7 @@ import com.vvwyy.cowpea.spi.ServiceLocator;
 import com.vvwyy.cowpea.test.spi.car.Auto;
 import com.vvwyy.cowpea.test.spi.car.Car;
 import com.vvwyy.cowpea.test.spi.car.Truck;
+import com.vvwyy.cowpea.test.spi.shape.Circle;
 import com.vvwyy.cowpea.test.spi.shape.GhostShape;
 import com.vvwyy.cowpea.test.spi.shape.Shape;
 import com.vvwyy.cowpea.test.spi.shape.Square;
@@ -36,7 +37,7 @@ public class ServiceFactoryTest {
     @Test
     public void testSimpleLoadWithoutStart() {
         serviceLocator = ServiceLocator.dependencySet()
-                .with(Shape.Provider.class)
+                .with(Square.Provider.class)
                 .build();
 
         Shape shape = serviceLocator.getService(Square.Provider.class).create();
@@ -48,7 +49,7 @@ public class ServiceFactoryTest {
     @Test
     public void testSimpleLoadWithStart() {
         serviceLocator = ServiceLocator.dependencySet()
-                .with(Shape.Provider.class)
+                .with(Square.Provider.class)
                 .build();
         serviceLocator.startAllServices();
 
@@ -110,7 +111,7 @@ public class ServiceFactoryTest {
         serviceLocator = ServiceLocator.dependencySet()
                 .with(Square.Provider.class)
                 //.with(Car.Provider.class)
-                .with(Truck.Provider.class)
+                .with(Auto.Provider.class)
                 .build();
 
         serviceLocator.startAllServices();
@@ -139,6 +140,38 @@ public class ServiceFactoryTest {
         Assert.assertEquals(30, auto.wheelMeasure());
         Assert.assertEquals(8, auto.wheelNum());
         Assert.assertEquals(8, auto.getEngine().cylinderNum());
+    }
+
+    @Test
+    public void testPluralDependencyService() {
+        serviceLocator = ServiceLocator.dependencySet()
+                .with(Square.Provider.class)
+//                .with(Truck.Provider.class)
+//                .with(Car.Provider.class)
+                .with(Auto.Provider.class)
+                .build();
+
+        serviceLocator.startAllServices();
+
+        Truck.Provider truckProvider = serviceLocator.getService(Truck.Provider.class);
+        Assert.assertNotNull(truckProvider);
+
+        Car.Provider carProvider = serviceLocator.getService(Car.Provider.class);
+        Assert.assertNotNull(carProvider);
+    }
+
+    @Test
+    public void testPluralDependencyWithoutAnnotation() {
+        try {
+            serviceLocator = ServiceLocator.dependencySet()
+                    .with(Square.Provider.class)
+                    .with(Circle.Provider.class)
+                    .build();
+        } catch (IllegalStateException e) {
+            Assert.assertTrue(true);
+            return;
+        }
+        Assert.fail("Need to fail.");
     }
 
 

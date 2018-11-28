@@ -1,4 +1,5 @@
 com.vvwyy.cowpea.test.spi.shape.SquareFactory
+com.vvwyy.cowpea.test.spi.shape.CircleFactory
 com.vvwyy.cowpea.test.spi.car.CarFactory
 com.vvwyy.cowpea.test.spi.car.TruckFactory
 com.vvwyy.cowpea.test.spi.car.RubberWheelFactory
