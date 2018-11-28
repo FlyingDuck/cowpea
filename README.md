@@ -50,6 +50,12 @@ Auto.Provider truckProvider = serviceLocator.getService(Truck.Provider.class); /
 Shape shape = serviceLocator.getService(Square.Provider.class).create(); // Shape -> Square
 ```
 
+
+### SPI - Service
+
+// todo doc
+
+
 **@PluralService** 
 Indicates that a Service subtype is permitted to have more than one concrete implementation registered with a ServiceProvider.
 
