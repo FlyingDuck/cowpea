@@ -9,6 +9,12 @@ import java.util.List;
 public class Car implements Auto {
 
     private List<Wheel> wheels;
+    private Engine engine;
+
+    public Car(List<Wheel> wheels, Engine engine) {
+        this.wheels = wheels;
+        this.engine = engine;
+    }
 
     @Override
     public void drive() {
@@ -25,8 +31,9 @@ public class Car implements Auto {
         return wheels.get(0).measure();
     }
 
-    public void setWheels(List<Wheel> wheels) {
-        this.wheels = wheels;
+    @Override
+    public Engine getEngine() {
+        return engine;
     }
 
     public static class Provider implements Auto.Provider {
@@ -41,8 +48,7 @@ public class Car implements Auto {
             wheels.add(wheelProvider.create(20));
             wheels.add(wheelProvider.create(20));
 
-            Car car = new Car();
-            car.setWheels(wheels);
+            Car car = new Car(wheels, null);
             return car;
         }
 

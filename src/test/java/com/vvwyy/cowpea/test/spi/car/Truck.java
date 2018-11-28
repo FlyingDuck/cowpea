@@ -10,9 +10,11 @@ import java.util.List;
 public class Truck implements Auto {
 
     private List<Wheel> wheels;
+    private Engine engine;
 
-    public Truck(List<Wheel> wheels) {
+    public Truck(List<Wheel> wheels, Engine engine) {
         this.wheels = wheels;
+        this.engine = engine;
     }
 
 
@@ -31,7 +33,12 @@ public class Truck implements Auto {
         return wheels.get(0).measure();
     }
 
-    @ServiceDependencies({Wheel.Provider.class})
+    @Override
+    public Engine getEngine() {
+        return engine;
+    }
+
+    @ServiceDependencies({Wheel.Provider.class, Engine.Provider.class})
     public static class Provider implements Auto.Provider {
         private ServiceProvider<Service> serviceProvider;
 
@@ -48,7 +55,10 @@ public class Truck implements Auto {
             wheels.add(wheelProvider.create(30));
             wheels.add(wheelProvider.create(30));
 
-            Truck truck = new Truck(wheels);
+            Engine.Provider engineProvider = serviceProvider.getService(Engine.Provider.class);
+            Engine engine = engineProvider.create();
+
+            Truck truck = new Truck(wheels, engine);
 
             return truck;
         }

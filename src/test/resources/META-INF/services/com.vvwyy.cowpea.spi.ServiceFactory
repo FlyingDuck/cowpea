@@ -2,3 +2,4 @@ com.vvwyy.cowpea.test.spi.shape.SquareFactory
 com.vvwyy.cowpea.test.spi.car.CarFactory
 com.vvwyy.cowpea.test.spi.car.TruckFactory
 com.vvwyy.cowpea.test.spi.car.RubberWheelFactory
+com.vvwyy.cowpea.test.spi.car.V8EngineFactory

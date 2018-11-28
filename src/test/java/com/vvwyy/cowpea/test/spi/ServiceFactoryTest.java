@@ -123,6 +123,24 @@ public class ServiceFactoryTest {
         Assert.assertEquals(8, auto.wheelNum());
     }
 
+    @Test
+    public void testConfigMultiDependencyService() {
+        serviceLocator = ServiceLocator.dependencySet()
+                .with(Square.Provider.class)
+                .with(Truck.Provider.class)
+                .build();
+
+        serviceLocator.startAllServices();
+
+        Truck.Provider truckProvider = serviceLocator.getService(Truck.Provider.class);
+        Assert.assertNotNull(truckProvider);
+
+        Auto auto = truckProvider.create();
+        Assert.assertEquals(30, auto.wheelMeasure());
+        Assert.assertEquals(8, auto.wheelNum());
+        Assert.assertEquals(8, auto.getEngine().cylinderNum());
+    }
+
 
 
 }

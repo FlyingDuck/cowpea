@@ -10,6 +10,7 @@ public interface Auto {
 
     int wheelMeasure();
 
+    Engine getEngine();
 
     interface Provider extends Service {
         Auto create();
