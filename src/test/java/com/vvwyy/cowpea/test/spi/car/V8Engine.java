@@ -9,7 +9,7 @@ public class V8Engine implements Engine {
         return 8;
     }
 
-    static class Provider implements Engine.Provider {
+    public static class Provider implements Engine.Provider {
 
         @Override
         public Engine create() {

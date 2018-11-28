@@ -16,7 +16,7 @@ public class RubberWheel implements Wheel {
         return measure;
     }
 
-    static class Provider implements Wheel.Provider {
+    public static class Provider implements Wheel.Provider {
 
         @Override
         public Wheel create(int measure) {

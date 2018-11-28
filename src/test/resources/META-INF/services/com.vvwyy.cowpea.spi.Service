@@ -1,0 +1,5 @@
+com.vvwyy.cowpea.test.spi.shape.Square$Provider
+com.vvwyy.cowpea.test.spi.car.Car$Provider
+com.vvwyy.cowpea.test.spi.car.Truck$Provider
+com.vvwyy.cowpea.test.spi.car.V8Engine$Provider
+com.vvwyy.cowpea.test.spi.car.RubberWheel$Provider

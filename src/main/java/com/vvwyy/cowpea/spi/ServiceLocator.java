@@ -40,8 +40,8 @@ public final class ServiceLocator implements ServiceProvider<Service> {
 
     private AtomicBoolean running = new AtomicBoolean(false);
 
-    public static DependencySet dependencySet() {
-        return new DependencySet();
+    public static ServiceFactoryLocatorBuilder dependencySet() {
+        return new ServiceFactoryLocatorBuilder();
     }
 
     public ServiceLocator(ServiceMap services) {
@@ -287,6 +287,15 @@ public final class ServiceLocator implements ServiceProvider<Service> {
         return list;
     }
 
+    @SuppressWarnings("unchecked")
+    private static <T extends Service> Collection<T> getServices(@SuppressWarnings("rawtypes") ServiceLoader<Service> services) {
+        List<T> list = new ArrayList<>();
+        for (Service s : services) {
+            list.add((T) s);
+        }
+        return list;
+    }
+
 
 
 
@@ -395,7 +404,7 @@ public final class ServiceLocator implements ServiceProvider<Service> {
 
 
 
-    public static class DependencySet implements Builder<ServiceLocator> {
+    public static class ServiceFactoryLocatorBuilder implements Builder<ServiceLocator> {
 
         @SuppressWarnings("rawtypes")
         private final ServiceLoader<ServiceFactory> serviceLoader = ClassLoading.libraryServiceLoaderFor(ServiceFactory.class);
@@ -404,19 +413,19 @@ public final class ServiceLocator implements ServiceProvider<Service> {
         private final Set<Class<? extends Service>> requested = new HashSet<>();
         private boolean includeMandatoryServices = true;
 
-        public DependencySet with(Service service) {
+        public ServiceFactoryLocatorBuilder with(Service service) {
             provided.add(service);
             return this;
         }
 
-        public DependencySet with(Iterable<? extends Service> services) {
+        public ServiceFactoryLocatorBuilder with(Iterable<? extends Service> services) {
             for (Service s : services) {
                 with(s);
             }
             return this;
         }
 
-        public <T extends Service> DependencySet with(ServiceCreationConfiguration<T> config) {
+        public <T extends Service> ServiceFactoryLocatorBuilder with(ServiceCreationConfiguration<T> config) {
             Class<T> serviceType = config.getServiceType();
 
             //TODO : This stanza is due to the way we use configure the JSR-107 service
@@ -439,13 +448,13 @@ public final class ServiceLocator implements ServiceProvider<Service> {
             }
         }
 
-        public DependencySet with(Class<? extends Service> clazz) {
+        public ServiceFactoryLocatorBuilder with(Class<? extends Service> clazz) {
             requested.add(clazz);
             return this;
         }
 
 
-        public DependencySet withoutMandatoryServices() {
+        public ServiceFactoryLocatorBuilder withoutMandatoryServices() {
             includeMandatoryServices = false;
             return this;
         }
@@ -600,6 +609,148 @@ public final class ServiceLocator implements ServiceProvider<Service> {
                 return emptyList();
             }
         }
+    }
+
+    public static class ServiceLocatorBuilder implements Builder<ServiceLocator> {
+
+        private final ServiceLoader<Service> serviceLoader = ClassLoading.libraryServiceLoaderFor(Service.class);
+
+        private final ServiceMap provided = new ServiceMap();
+        private final Set<Class<? extends Service>> requested = new HashSet<>();
+
+        public ServiceLocatorBuilder with(Service service) {
+            this.provided.add(service);
+            return this;
+        }
+
+        public ServiceLocatorBuilder with(Iterable<? extends Service> services) {
+            for (Service service : services) {
+                with(service);
+            }
+            return this;
+        }
+
+        public ServiceLocatorBuilder with(Class<? extends Service> clazz) {
+            this.requested.add(clazz);
+            return this;
+        }
+
+        public boolean contains(Class<? extends Service> serviceClass) {
+            return provided.contains(serviceClass);
+        }
+
+        public <T extends Service> T providerOf(Class<T> serviceClass) {
+            if (serviceClass.isAnnotationPresent(PluralService.class)) {
+                throw new IllegalArgumentException("Cannot retrieve single provider for plural service");
+            } else {
+                Collection<T> providers = providersOf(serviceClass);
+                switch (providers.size()) {
+                    case 0:
+                        return null;
+                    case 1:
+                        return providers.iterator().next();
+                    default:
+                        throw new AssertionError();
+                }
+            }
+        }
+
+        public <T extends Service> Collection<T> providersOf(Class<T> serviceClass) {
+            return provided.get(serviceClass);
+        }
+
+
+
+        @Override
+        public ServiceLocator build() {
+            try {
+                ServiceMap resolvedServices = new ServiceMap();
+                for (Service service : this.provided.all()) {
+                    resolvedServices = lookupDependenciesOf(resolvedServices, service.getClass()).add(service);
+                }
+
+                for (Class<? extends Service> request : requested) {
+                    if (request.isAnnotationPresent(PluralService.class)) {
+                        try {
+                            resolvedServices = lookupService(resolvedServices, request);
+                        } catch (DependencyException e) {
+                            if (!resolvedServices.contains(request)) {
+                                throw e;
+                            }
+                        }
+                    } else if (!resolvedServices.contains(request)) {
+                        resolvedServices = lookupService(resolvedServices, request);
+                    }
+                }
+
+                return new ServiceLocator(resolvedServices);
+
+            } catch (DependencyException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+
+
+        private ServiceMap lookupDependenciesOf(ServiceMap resolved, Class<? extends Service> requested) throws DependencyException {
+            for (Class<? extends Service> dependency : identifyImmediateDependenciesOf(requested)) {
+                try {
+                    resolved = lookupService(resolved, dependency);
+                } catch (DependencyException e) {
+                    OptionalServiceDependencies optionalAnnotation = requested.getAnnotation(OptionalServiceDependencies.class);
+                    if (optionalAnnotation != null && Arrays.asList(optionalAnnotation.value()).contains(dependency.getName())) {
+                        LOGGER.debug("Skipping optional dependency of {} that cannot be looked up: {}", requested, dependency);
+                        continue;
+                    }
+                    throw e;
+                }
+            }
+            return resolved;
+        }
+
+        private <T extends Service> ServiceMap lookupService(ServiceMap resolved, Class<T> requested) throws DependencyException {
+            //Have we already resolved this dependency?
+            if (resolved.contains(requested) && !requested.isAnnotationPresent(PluralService.class)) {
+                return resolved;
+            }
+
+            //Attempt resolution from the provided services
+            resolved = new ServiceMap(resolved).addAll(provided.get(requested));
+            if (resolved.contains(requested) && !requested.isAnnotationPresent(PluralService.class)) {
+                return resolved;
+            }
+
+            Collection<? extends Service> services = discoverServices(resolved, requested);
+            if (services.size() > 1 && !requested.isAnnotationPresent(PluralService.class)) {
+                throw new DependencyException("Multiple services for non-plural service");
+            }
+            for (Service s : services) {
+                if (!resolved.contains(s.getClass())) {
+                    try {
+                        resolved = lookupDependenciesOf(resolved, s.getClass());
+                    } catch (DependencyException e) {
+                        continue;
+                    }
+                    resolved = new ServiceMap(resolved).add(s);
+                }
+            }
+            if (resolved.contains(requested)) {
+                return resolved;
+            } else {
+                throw new DependencyException("Failed to find provider with satisfied dependency set for " + requested + " [candidates " + services + "]");
+            }
+        }
+
+        private Collection<? extends Service> discoverServices(ServiceMap resolved, Class<? extends Service> serviceClass) {
+            Collection<? extends Service> services = getServices(serviceLoader).stream()
+                    .filter(s -> serviceClass.isAssignableFrom(s.getClass()))
+//                    .map(s ->  s)
+                    .filter(s -> !provided.contains(s.getClass()))
+                    .filter(s -> !resolved.contains(s.getClass()))
+                    .collect(toList());
+
+            return services;
+        }
+
     }
 
     private static class DependencyException extends Exception {
