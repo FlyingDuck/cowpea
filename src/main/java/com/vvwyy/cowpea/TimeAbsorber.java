@@ -122,11 +122,6 @@ public abstract class TimeAbsorber {
     abstract static class SleepingStopwatch {
         protected SleepingStopwatch() {}
 
-        /*
-         * We always hold the mutex when calling this. TODO(cpovirk): Is that important? Perhaps we need
-         * to guarantee that each call to reserveEarliestAvailable, etc. sees a value >= the previous?
-         * Also, is it OK that we don't hold the mutex when sleeping?
-         */
         protected abstract long readMicros(); // todo refactor to nowMicros
 
         protected abstract void sleepMicrosUninterruptibly(long micros);
