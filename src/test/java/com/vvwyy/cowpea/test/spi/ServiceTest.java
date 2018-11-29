@@ -11,6 +11,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.Collection;
+
 public class ServiceTest {
 
     private ServiceLocator serviceLocator;
@@ -34,7 +36,7 @@ public class ServiceTest {
 
     @Test
     public void testSimpleLoad() {
-        serviceLocator = new ServiceLocator.ServiceLocatorBuilder()
+        serviceLocator = ServiceLocator.serviceLocatorBuilder()
                 .with(Shape.Provider.class)
                 .build();
 
@@ -53,7 +55,7 @@ public class ServiceTest {
 
     @Test
     public void testPluralLoad() {
-        serviceLocator = new ServiceLocator.ServiceLocatorBuilder()
+        serviceLocator = ServiceLocator.serviceLocatorBuilder()
                 .with(Shape.Provider.class)
                 .with(Auto.Provider.class)
                 .build();
@@ -67,5 +69,23 @@ public class ServiceTest {
         Assert.assertNotNull(truckProvider);
     }
 
+    @Test
+    public void testPluralLoad2() {
+        serviceLocator = ServiceLocator.serviceLocatorBuilder()
+                .with(Shape.Provider.class)
+                .with(Auto.Provider.class)
+                .build();
+
+        serviceLocator.startAllServices();
+
+        Collection<Auto.Provider> autoProviders = serviceLocator.getServicesOfType(Auto.Provider.class);
+        Assert.assertNotNull(autoProviders);
+        Assert.assertEquals(2, autoProviders.size());
+
+        for (Auto.Provider provider : autoProviders) {
+            Auto auto = provider.create();
+            auto.drive();
+        }
+    }
 
 }

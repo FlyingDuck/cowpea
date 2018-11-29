@@ -13,6 +13,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.Collection;
+
 public class ServiceFactoryTest {
 
     private ServiceLocator serviceLocator;
@@ -36,7 +38,7 @@ public class ServiceFactoryTest {
 
     @Test
     public void testSimpleLoadWithoutStart() {
-        serviceLocator = ServiceLocator.dependencySet()
+        serviceLocator = ServiceLocator.serviceFactoryLocatorBuilder()
                 .with(Square.Provider.class)
                 .build();
 
@@ -48,7 +50,7 @@ public class ServiceFactoryTest {
 
     @Test
     public void testSimpleLoadWithStart() {
-        serviceLocator = ServiceLocator.dependencySet()
+        serviceLocator = ServiceLocator.serviceFactoryLocatorBuilder()
                 .with(Square.Provider.class)
                 .build();
         serviceLocator.startAllServices();
@@ -62,7 +64,7 @@ public class ServiceFactoryTest {
     @Test
     public void testLoadUnconfigService() {
         try {
-            serviceLocator = ServiceLocator.dependencySet()
+            serviceLocator = ServiceLocator.serviceFactoryLocatorBuilder()
                     .with(GhostShape.Provider.class)
                     .build();
         } catch (IllegalStateException e) {
@@ -74,7 +76,7 @@ public class ServiceFactoryTest {
 
     @Test
     public void testGetUnconfigService() {
-        serviceLocator = ServiceLocator.dependencySet()
+        serviceLocator = ServiceLocator.serviceFactoryLocatorBuilder()
                 .with(Square.Provider.class)
                 .build();
 
@@ -87,7 +89,7 @@ public class ServiceFactoryTest {
 
     @Test
     public void testNoconfigDependencyService() {
-        serviceLocator = ServiceLocator.dependencySet()
+        serviceLocator = ServiceLocator.serviceFactoryLocatorBuilder()
                 .with(Square.Provider.class)
                 .with(Car.Provider.class)
                 .build();
@@ -108,7 +110,7 @@ public class ServiceFactoryTest {
 
     @Test
     public void testConfigDependencyService() {
-        serviceLocator = ServiceLocator.dependencySet()
+        serviceLocator = ServiceLocator.serviceFactoryLocatorBuilder()
                 .with(Square.Provider.class)
                 //.with(Car.Provider.class)
                 .with(Auto.Provider.class)
@@ -126,7 +128,7 @@ public class ServiceFactoryTest {
 
     @Test
     public void testConfigMultiDependencyService() {
-        serviceLocator = ServiceLocator.dependencySet()
+        serviceLocator = ServiceLocator.serviceFactoryLocatorBuilder()
                 .with(Square.Provider.class)
                 .with(Truck.Provider.class)
                 .build();
@@ -144,7 +146,7 @@ public class ServiceFactoryTest {
 
     @Test
     public void testPluralDependencyService() {
-        serviceLocator = ServiceLocator.dependencySet()
+        serviceLocator = ServiceLocator.serviceFactoryLocatorBuilder()
                 .with(Square.Provider.class)
 //                .with(Truck.Provider.class)
 //                .with(Car.Provider.class)
@@ -163,7 +165,7 @@ public class ServiceFactoryTest {
     @Test
     public void testPluralDependencyWithoutAnnotation() {
         try {
-            serviceLocator = ServiceLocator.dependencySet()
+            serviceLocator = ServiceLocator.serviceFactoryLocatorBuilder()
                     .with(Square.Provider.class)
                     .with(Circle.Provider.class)
                     .build();
@@ -174,6 +176,22 @@ public class ServiceFactoryTest {
         Assert.fail("Need to fail.");
     }
 
+    @Test
+    public void testPluraServices() {
+        serviceLocator = ServiceLocator.serviceFactoryLocatorBuilder()
+                .with(Auto.Provider.class)
+                .build();
+        serviceLocator.startAllServices();
+
+        Collection<Auto.Provider> autoProviders = serviceLocator.getServicesOfType(Auto.Provider.class);
+        Assert.assertNotNull(autoProviders);
+        Assert.assertEquals(2, autoProviders.size());
+
+        for (Auto.Provider provider : autoProviders) {
+            Auto auto = provider.create();
+            auto.drive();
+        }
+    }
 
 
 }

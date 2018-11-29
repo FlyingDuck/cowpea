@@ -40,8 +40,12 @@ public final class ServiceLocator implements ServiceProvider<Service> {
 
     private AtomicBoolean running = new AtomicBoolean(false);
 
-    public static ServiceFactoryLocatorBuilder dependencySet() {
+    public static ServiceFactoryLocatorBuilder serviceFactoryLocatorBuilder() {
         return new ServiceFactoryLocatorBuilder();
+    }
+
+    public static ServiceLocatorBuilder serviceLocatorBuilder() {
+        return new ServiceLocatorBuilder();
     }
 
     public ServiceLocator(ServiceMap services) {
@@ -413,6 +417,8 @@ public final class ServiceLocator implements ServiceProvider<Service> {
         private final Set<Class<? extends Service>> requested = new HashSet<>();
         private boolean includeMandatoryServices = true;
 
+        ServiceFactoryLocatorBuilder() {}
+
         public ServiceFactoryLocatorBuilder with(Service service) {
             provided.add(service);
             return this;
@@ -617,6 +623,8 @@ public final class ServiceLocator implements ServiceProvider<Service> {
 
         private final ServiceMap provided = new ServiceMap();
         private final Set<Class<? extends Service>> requested = new HashSet<>();
+
+        ServiceLocatorBuilder() {}
 
         public ServiceLocatorBuilder with(Service service) {
             this.provided.add(service);
