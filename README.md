@@ -36,7 +36,7 @@ absorber.recover();
 
 init ServiceProvider `servicelocator`:
 ```
-ServiceLocator serviceLocator = ServiceLocator.dependencySet()
+ServiceLocator serviceLocator = ServiceLocator.serviceFactoryLocatorBuilder()
                 .with(Shape.Provider.class)
                 .with(Auto.Provider.class)
                 .build();
@@ -48,6 +48,9 @@ Get service:
 ```
 Auto.Provider truckProvider = serviceLocator.getService(Truck.Provider.class); // Auto -> Truck
 Shape shape = serviceLocator.getService(Square.Provider.class).create(); // Shape -> Square
+Shape shape = serviceLocator.getService(Shape.Provider.class).create(); // Shape -> Square
+
+Collection<Auto.Provider> autoProviders = serviceLocator.getServicesOfType(Auto.Provider.class); // <Car, Truck>
 ```
 
 
